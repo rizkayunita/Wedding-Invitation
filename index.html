@@ -73,7 +73,7 @@
         max-height: 100%;
         border-radius: 20px;
         aspect-ratio: auto;
-        height: 100%;
+        height: 100dvh;
         box-shadow: 0 10px 40px rgba(0,0,0,0.3);
       }
       .phone-frame::before {
@@ -424,6 +424,7 @@
       50% { transform: translate(-50%, 8px); }
     }
 
+  
     .amp {
       font-family: 'Cormorant', serif;
       font-style: italic;
@@ -601,6 +602,58 @@
         font-size: 7px;
       }
     }
+
+    .toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* bubble notif */
+.toast {
+  width: 260px;
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+
+  animation: toastIn .4s ease forwards;
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+/* hadir (gold/green soft) */
+.toast.hadir {
+  background: #d9fdd3;
+  color: #111827;
+  border-left: 4px solid #e6b340;
+}
+
+/* tidak hadir */
+.toast.tidak {
+  background: #ffffff;
+  color: #334155;
+  border-left: 4px solid #cbd5e1;
+}
+
+/* animasi masuk */
+@keyframes toastIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+   
+
   </style>
   <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -611,7 +664,7 @@
     <!-- SECTION 1 — COVER -->
     <section id="section-1" class="section cover-bg text-white text-center relative">
       <div class="center-ornamengold">
-       <img src="ornamen emas.png">
+       <img src="ornamenemas.png">
       </div>
      <div class="petal" style="top: 25%; left: 15%; animation-delay: 0s;"></div>
      <div class="petal" style="top: 25%; right: 20%; animation-delay: 2s;"></div>
@@ -708,6 +761,7 @@
        </div>
       </div>
      </div>
+
     </section><!-- SECTION 4 — SAVE THE DATE -->
     <section id="section-4" class="section cream-bg text-center">
      <div class="reveal stagger w-full max-w-sm">
@@ -808,6 +862,7 @@
       </div>
       <p class="text-xs mt-8 leading-relaxed" style="color: var(--ink-soft); --i:5">Formal / Semi-formal attire</p>
      </div>
+
     </section><!-- SECTION 6 — RSVP -->
     <section id="section-6" class="section cream-bg text-center">
      <div class="reveal stagger w-full max-w-sm">
@@ -818,42 +873,119 @@
        <p class="text-sm mt-4" style="color: var(--ink-soft); --i:2">Mohon konfirmasi kehadiran Anda</p>
       </div>
 
-      <form onsubmit="submitRSVP(event)"class="mt-10 space-y-5 w-full text-left">
-       <div style="--i:5">
-       <label class="input-label">Nama Anda</label>
-       <input type="text" required class="input-el-light" id="rsvpName">
-        </div>
+      <form id="rsvpForm" onsubmit="submitRSVP(event)" class="mt-10 space-y-5 w-full text-left">
 
-        <div style="--i:6">
-        <label class="input-label">Jumlah Tamu</label>
-        <input type="number" min="1" max="5" class="input-el-light" id="rsvpCount">
-        </div>
-       <div class="flex gap-2 sm:gap-3 pt-2" style="--i:7">
-        <div class="radio-card-light active" data-val="hadir" onclick="selectAttendance(this)">
-         <i data-lucide="check" style="width:14px;height:14px;display:inline-block;margin-bottom:4px;"></i>
-         <div>
-          Hadir
-         </div>
-        </div>
-        
-        <div class="radio-card-light" data-val="tidak" onclick="selectAttendance(this)">
-         <i data-lucide="x" style="width:14px;height:14px;display:inline-block;margin-bottom:4px;"></i>
-         <div>
-          Tidak
-         </div>
-        </div>
-       </div>
-       <div style="--i:8">
-        <label class="input-label">Ucapan & Doa</label>
-        <textarea rows="2" class="input-el-light"></textarea>
-       </div>
-       <div class="text-center pt-4" style="--i:9">
-        <button type="submit" class="btn-elegant"> <i data-lucide="send" style="width:12px;height:12px;display:inline-block;margin-right:8px;vertical-align:-2px;"></i> Kirim </button>
-       </div>
+  <div style="--i:5">
+    <label class="input-label">Nama Anda</label>
+
+    <input
+      type="text"
+      required
+      class="input-el-light"
+      id="rsvpName"
+    >
+  </div>
+
+  <div style="--i:6">
+    <label class="input-label">Jumlah Tamu</label>
+
+    <input
+      type="number"
+      min="1"
+      max="5"
+      class="input-el-light"
+      id="rsvpJumlah"
+    >
+  </div>
+
+  <!-- INPUT HIDDEN -->
+  <input
+    type="hidden"
+    id="attendance"
+    value="Hadir"
+  >
+
+  <div class="flex gap-2 sm:gap-3 pt-2" style="--i:7">
+
+    <div
+      class="radio-card-light active"
+      data-val="Hadir"
+      onclick="selectAttendance(this)"
+    >
+      <i data-lucide="check"
+         style="width:14px;height:14px;display:inline-block;margin-bottom:4px;">
+      </i>
+
+      <div>Hadir</div>
+    </div>
+
+    <div
+      class="radio-card-light"
+      data-val="Tidak Hadir"
+      onclick="selectAttendance(this)"
+    >
+      <i data-lucide="x"
+         style="width:14px;height:14px;display:inline-block;margin-bottom:4px;">
+      </i>
+
+      <div>Tidak Hadir</div>
+    </div>
+
+  </div>
+
+  <div style="--i:8">
+    <label class="input-label">
+      Ucapan & Doa
+    </label>
+
+    <textarea
+      rows="2"
+      class="input-el-light"
+      id="rsvpUcapan"
+    ></textarea>
+  </div>
+
+  <div class="text-center pt-4" style="--i:9">
+
+    <button type="submit" class="btn-elegant">
+
+      <i data-lucide="send"
+         style="width:12px;height:12px;display:inline-block;margin-right:8px;vertical-align:-2px;"></i>Kirim</button>
+
+    </div>
       </form>
      </div>
-    </section><!-- SECTION 7 — HADIAH -->
-    <section id="section-7" class="section cream-bg text-center">
+
+    </section><!-- SECTION 7 — UCAPAN & DOA -->
+     <section id="section-7" class="section cream-bg text-center">
+  
+  <div class="w-full max-w-sm h-full flex flex-col">
+
+    <!-- HEADER (STICKY) -->
+    <div class="sticky top-0 bg-[var(cream-bg)] z-10 pt-6 pb-4 text-center">
+      <p class="ornament mb-3" style="color: var(--gold-dark)">◆ ◆ ◆</p>
+
+      <p class="font-italic-el text-lg" style="color: var(--gold-dark)">
+        best wishes
+      </p>
+
+      <h2 class="font-display text-3xl sm:text-4xl mt-2" style="color: var(--ink)">
+        Ucapan & Doa
+      </h2>
+    </div>
+
+    <!-- LIST (SCROLLABLE AREA) -->
+    <div class="flex-1 overflow-y-auto px-2 pb-10">
+      <div id="wishContainer" class="space-y-6 max-w-xl mx-auto">
+        <!-- isi ucapan -->
+      </div>
+    </div>
+
+  </div>
+
+    </section>
+    </section><!-- SECTION 8 — HADIAH -->
+    <section id="section-8" class="section cream-bg text-center">
        <div class="center-flower1">
        <img src="bungaatas.png">
       </div>
@@ -869,21 +1001,22 @@
         <div class="flex items-center gap-2 mb-2" style="color: var(--gold-dark);">
          <i data-lucide="gift" style="width:14px;height:14px;"></i> <span class="text-[10px] tracking-[0.3em] uppercase">Transfer Bank</span>
         </div>
-        <p class="text-xs mt-3" style="color: var(--ink-soft);">Bank BCA</p>
-        <p class="font-cormorant text-sm mt-1" style="color: var(--ink);">1234567890</p>
-        <p class="text-[12px] mt-1" style="color: var(--ink-soft);">a/n Rizka</p>
+        <p class="text-sm mt-3" style="color: var(--ink-soft);">Bank BCA</p>
+        <p class="font-cormorant text-sm mt-1" style="color: var(--ink);">0700045315</p>
+        <p class="text-[14px] mt-1" style="color: var(--ink-soft);">a/n Mohammad Rizky</p>
        </div>
        <div style="border: 1px solid rgba(156,130,68,0.4); padding: 16px; text-align: center; border-radius: 4px;">
         <div class="flex items-center gap-2 mb-2" style="color: var(--gold-dark);">
-         <i data-lucide="wallet" style="width:14px;height:14px;"></i> <span class="text-[10px] tracking-[0.3em] uppercase">E-Wallet</span>
+         <i data-lucide="gift" style="width:14px;height:14px;"></i> <span class="text-[10px] tracking-[0.3em] uppercase">Transfer Bank</span>
         </div>
-        <p class="text-xs mt-3" style="color: var(--ink-soft);">GCash / GCash Link</p>
-        <p class="font-cormorant text-sm mt-1" style="color: var(--ink);">+62 812 345 678</p>
+        <p class="text-sm mt-3" style="color: var(--ink-soft);">Bank BRI</p>
+        <p class="font-cormorant text-sm mt-1" style="color: var(--ink);">358901035199538</p>
+        <p class="text-[14px] mt-1" style="color: var(--ink-soft);">a/n Rizka Yunita Wulandari</p>
        </div>
       </div>
      </div>
-    </section><!-- SECTION 8 — CLOSING -->
-    <section id="section-8" class="section dark-bg text-white text-center flex flex-col items-center justify-center py-20">
+    </section><!-- SECTION 9 — CLOSING -->
+    <section id="section-9" class="section dark-bg text-white text-center flex flex-col items-center justify-center py-20">
      <div class="reveal stagger w-full max-w-sm">
       <div class="monogram mb-8" style="--i:0">
        R&amp;R
@@ -900,7 +1033,10 @@
     </section>
    </div>
   </div>
+
   <script>
+
+    
     lucide.createIcons();
     
     function getGuestName() {
@@ -923,12 +1059,29 @@
     const reveals = document.querySelectorAll('.reveal');
 
     const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) e.target.classList.add('in');
-      });
-    }, { root: scrollArea, threshold: 0.15 });
 
-    reveals.forEach(r => io.observe(r));
+      entries.forEach(entry => {
+
+      if (entry.isIntersecting) {
+
+      // muncul saat masuk viewport
+      entry.target.classList.add('in');
+
+      } else {
+
+      // reset saat keluar viewport
+      entry.target.classList.remove('in');
+
+     }
+
+    });
+
+    }, {
+      root: scrollArea,
+      threshold: 0.15
+    });
+
+    reveals.forEach(el => io.observe(el));
 
 
     // Open invitation
@@ -962,15 +1115,96 @@
   }
 
     // Submit RSVP
-    function submitRSVP(e) {
-      e.preventDefault();
-      const name = document.getElementById('rsvpName').value.trim();
-      if (!name) return;
-      showToast('Terima kasih, ' + name + ' 💌');
-      e.target.reset();
-      document.querySelectorAll('.radio-card').forEach((c, i) => c.classList.toggle('active', i === 0));
-    }
 
+  async function submitRSVP(e) {
+
+  e.preventDefault();
+
+  const form = e.target;
+
+  const data = {
+    nama: document.getElementById('rsvpName').value.trim(),
+    jumlah: document.getElementById('rsvpJumlah').value,
+    kehadiran: document.getElementById('attendance').value,
+    ucapan: document.getElementById('rsvpUcapan').value.trim()
+  };
+
+  if (!data.nama) {
+    alert("Nama wajib diisi");
+    return;
+  }
+
+  try {
+
+    console.log(data);
+
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbz0usSfesYw_UqVTuQDAllxb_poygPXdhC-DTNTiZh3oeqbkjGz5TpQ7j-QayWIfDUZ/exec",
+      {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      }
+    );
+
+    alert("RSVP berhasil dikirim ❤️");
+
+    form.reset();
+
+    loadWishes();
+
+  } catch(error) {
+
+    console.log(error);
+
+    alert("Gagal mengirim RSVP");
+
+  }
+
+  }
+
+
+  async function loadWishes() {
+  try {
+    const res = await fetch(
+      "https://script.google.com/macros/s/AKfycbz0usSfesYw_UqVTuQDAllxb_poygPXdhC-DTNTiZh3oeqbkjGz5TpQ7j-QayWIfDUZ/exec"
+    );
+
+    const data = await res.json();
+    const container = document.getElementById("wishContainer");
+
+    container.innerHTML = "";
+
+    const list = data.reverse();
+
+    list.forEach((item) => {
+      const isHadir = item.kehadiran === "Hadir";
+
+      const div = document.createElement("div");
+      div.className =
+        "p-4 rounded-xl border text-left transition-all duration-300 " +
+        (isHadir
+          ? "border-blue-300 bg-blue-50"
+          : "border-slate-300 bg-white");
+
+      div.innerHTML = `
+        <b>${item.nama}</b>
+        <div class="mt-1">💌 ${item.ucapan || "Semoga bahagia selalu"}</div>
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
+    
     // Countdown timer
     const weddingDate = new Date('2026-07-04T08:00:00').getTime();
     function updateCountdown() {
